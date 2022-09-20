@@ -56,22 +56,31 @@ def user_login():
 
     if form.validate_on_submit():
         username = form.username.data
-        password = form.username.data
+        password = form.password.data
 
         user = User.authenticate(username, password)
         if user:
             flash(f'Welcome back, {user.username}')
             session['username'] = user.username
-            return redirect('/tweets')
+            return redirect('/secret')
         else:
             form.username.errors = ['Invalid username/password']
 
     return render_template('login.html', form=form)
 
+@app.route('/logout', methods=['GET'])
+def logout_user():
+    '''Logout user and remove themn from the session'''
+
+    session.pop('username')
+    return redirect('/')
+
 @app.route('/secret')
 def congrats_message():
-    if session['username']:
-        return render_template('secret.html')
+    
+    
+    if 'username' not in session:
+        flash('Login Required')
+        return redirect('/login')
     else:
-        flash('Login/Account Required')
-        return redirect('/')
+        return render_template('secret.html')
