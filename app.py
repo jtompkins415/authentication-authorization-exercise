@@ -44,7 +44,7 @@ def register_user():
         db.session.commit()
 
         flash('User Created!')
-        return redirect('/secret')
+        return redirect(f'/users/{new_user.username}')
     
     return render_template('register.html', form=form) 
 
@@ -62,7 +62,7 @@ def user_login():
         if user:
             flash(f'Welcome back, {user.username}')
             session['username'] = user.username
-            return redirect('/secret')
+            return redirect(f'/users/{user.username}')
         else:
             form.username.errors = ['Invalid username/password']
 
@@ -75,12 +75,13 @@ def logout_user():
     session.pop('username')
     return redirect('/')
 
-@app.route('/secret')
-def congrats_message():
+@app.route('/users/<username>', methods=['GET'])
+def user_details(username):
     
     
     if 'username' not in session:
         flash('Login Required')
         return redirect('/login')
     else:
-        return render_template('secret.html')
+        user = User.query.get_or_404(username)
+        return render_template('user_detail.html', user=user)
