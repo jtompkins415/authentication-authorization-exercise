@@ -17,8 +17,16 @@
             {{field.label}}
             {{field}}
         </p>
+
+        <p class="form-text text-danger">
+            {% for error in field.errors %}
+            {{error}}
+            {% endfor %}
+            </p>
     
     {% endfor %}
+
+
 
     <button class="btn btn-primary btn-sm">Log In</button>
 </form>

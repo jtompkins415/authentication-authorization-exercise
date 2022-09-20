@@ -64,7 +64,7 @@ def user_login():
             session['username'] = user.username
             return redirect('/tweets')
         else:
-            form.username.errors = ['Invalid username/password', 'primary']
+            form.username.errors = ['Invalid username/password']
 
     return render_template('login.html', form=form)
 
