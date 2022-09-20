@@ -8,7 +8,20 @@
 <div>Username: {{user.username}}</div>
 <div>First Name: {{user.first_name}}</div>
 <div>Last Name: {{user.last_name}}</div>
-<div>email: {{user.email}}</div>
+<div>Email: {{user.email}}</div>
+<a href="/users/{{user.username}}/delete" class="btn btn-danger btn-sm">Delete User</a>
 </div>
 
+<div class="container">
+<h2>Feedback</h2>
+
+{% for comment in feedback %}
+<p>
+    {{comment.title}}
+    {{comment}}
+</p>
+{% endfor %}
+
+<a href="/users/{{user.username}}/feedback/add" class="btn btn-info btn-sm">Add Feedback</a>
+</div>
 {% endblock %}
