@@ -58,10 +58,13 @@ def user_login():
         username = form.username.data
         password = form.username.data
 
-        if User.authenticate(username, password):
-            return redirect('/secret')
+        user = User.authenticate(username, password)
+        if user:
+            flash(f'Welcome back, {user.username}')
+            session['username'] = user.username
+            return redirect('/tweets')
         else:
-            flash('Invalid username/password')
+            form.username.errors = ['Invalid username/password', 'primary']
 
     return render_template('login.html', form=form)
 
