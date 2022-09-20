@@ -37,7 +37,7 @@ class User(db.Model):
 
     
     @classmethod
-    def authenticate(cls,username,pwd,email,first_name, last_name):
+    def authenticate(cls,username,pwd):
         '''Authenticate user'''
 
         user = User.query.filter_by(username).first()
@@ -46,5 +46,4 @@ class User(db.Model):
             return user
         else:
             return False
-    
     
