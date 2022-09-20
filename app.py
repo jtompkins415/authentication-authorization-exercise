@@ -80,25 +80,26 @@ def logout_user():
 @app.route('/users/<username>', methods=['GET'])
 def user_details(username):
     '''Show details about logged in User'''
-    
-    if 'username' not in session:
+    user = User.query.get_or_404(username)
+
+    if user.username != session['username']:
         flash('Login Required')
         return redirect('/login')
     else:
         feedback = Feedback.query.all()
-        user = User.query.get_or_404(username)
+        
         return render_template('user_detail.html', user=user, feedback=feedback)
 
 @app.route('/users/<username>/delete', methods=['POST'])
 def delete_user(username):
     '''Delete User'''
+    user = User.query.get_or_404(username)
 
-    if 'username' not in session:
+    if user.username != session['username']:
+        
         flash('Login Required')
         return redirect('/login')
     else:
-        user = User.query.get_or_404(username)
-       
         db.session.delete(user)
         db.session.commit()
 
@@ -131,3 +132,46 @@ def add_feedback(username):
         return redirect(f'/users/{user.username}')
     else:
         return render_template('feedback_form.html', form=form)
+
+@app.route('/feedback/<feedback_id>/update', methods=['GET', 'POST'])
+def update_feedback(feedback_id):
+    '''Update feedback and handle form submission'''
+    
+    feedback = Feedback.query.get_or_404(feedback_id)
+
+    if feedback.user.username != session['username']:
+        flash('Access Denied')
+        return redirect('/login')
+    
+    form = FeedbackForm()
+    
+   
+    if form.validate_on_submit():
+        
+        feedback.title = form.title.data
+        feedback.content = form.content.data
+
+        db.session.add(feedback)
+        db.session.commit()
+
+        return redirect(f'/users/{feedback.user.username}')
+    else:
+        return render_template('update_feedback.html', form=form, feedback=feedback)
+
+@app.route('/feedback/<feedback_id>/delete', methods=['POST'])
+def delete_feedback(feedback_id):
+    '''Delete posted feedback'''
+
+    feedback = Feedback.query.get_or_404(feedback_id)
+
+    if session['username'] == feedback.user.username:
+        flash('Access Denied')
+        redirect('/login')
+
+    db.session.delete(feedback)
+    db.session.commit()
+
+    return redirect(f'/users/{feedback.user.username}')
+
+
+
